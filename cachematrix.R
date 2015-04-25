@@ -14,9 +14,9 @@ makeCacheMatrix <- function(x = matrix()) {
         x <<- y                                    ## The set function caches the matrix
         inverse <<- NULL
     }
-    get <- function() x
+    get <- function() x                            ## Returns the matrix object from cache
     setinverse <- function(inv) inverse <<- inv    ## The inverse is cached
-    getinverse <- function() inverse
+    getinverse <- function() inverse               ## Returns the inverse from cache
     list(set = set, get = get,
          setinverse = setinverse,
          getinverse = getinverse)                  ## This creates the list of functions that make caching work
@@ -31,24 +31,24 @@ makeCacheMatrix <- function(x = matrix()) {
 cacheSolve <- function(x, ...) {
         ## Return a matrix that is the inverse of 'x'
     
-    if(is.null(x$get())){            ## Checks if any matrix is in cache
-        x$set(x)                     ## Save the matrix in cache
+    if(is.null(x$get())){            ## Checks if any matrix is in cache. 
+        x$set(x)                     ## If no matrix is available in cache, save the matrix passed in function argument in cache
     }
     if(identical(x$get(),x)){        ## Check if passed matrix is same as cached matrix    
         inv <- x$getinverse()        ## Get the inverse from cache
         if(!is.null(inv)) {          ## Check for null
-            return(inv)              ## Return the inverse
+            return(inv)              ## Return the inverse if cached value is not null
         }
         else{
-            inv <- solve(x)          ## Calculate the inverse
-            x$setinverse(inv)        ## Save the inverse in cache
+            inv <- solve(x)          ## Calculate the inverse since there is no cached value
+            x$setinverse(inv)        ## Save the calculated inverse in cache
             return(inv)              ## Return the inverse
         }
     }
     else{                            ## Passed matrix is not the same as cached matrix
         x$set(x)                     ## Save the matrix in cache
-        inv <- solve(x)              ## Calculate inverse of given matrix
-        x$setinverse(inv)            ## Save the inverse in cache
+        inv <- solve(x)              ## Calculate the inverse of given matrix
+        x$setinverse(inv)            ## Save the inverse in cache for future use
         return(inv)                  ## Return the inverse
     }
 }
